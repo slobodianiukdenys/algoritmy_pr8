@@ -58,7 +58,44 @@ class BinaryTree{
             }
         }
     }
-}
+
+    delete(value){
+        this.root = this.deleteRecursively(this.root, value);
+    }
+
+    deleteRecursively(node, value){
+        if (node === undefined){
+            console.log("not found");
+            return undefined;
+        }
+        if (value < node.value){
+            node.left = this.deleteRecursively(node.left, value);
+        }else if(value > node.value){
+            node.right = this.deleteRecursively(node.right, value);
+        }else{
+            if (!node.left && !node.right) {
+                return undefined;
+            }
+            if (!node.left) {
+                return node.right;
+            }
+            if (!node.right) {
+                return node.left;
+            }
+            let minRight = this._findMin(node.right);
+            node.value = minRight.value;
+            node.right = this._deleteRecursively(node.right, minRight.value);
+        }
+        return node;
+    }
+    
+    _findMin(node) {
+        while (node.left) {
+            node = node.left;
+        }
+        return node;
+    }
+        }
 
 
 const tree = new BinaryTree();
@@ -72,6 +109,8 @@ tree.add(37);
 tree.add(31);
 tree.add(41);
 
-const res = tree.find(23);
-console.log(res)
-// console.log(JSON.stringify(tree, null, "  "));
+// const res = tree.find(23);
+// console.log(res)
+console.log(JSON.stringify(tree, null, "  "));
+delete(5);
+console.log(JSON.stringify(tree, null, "  "));
