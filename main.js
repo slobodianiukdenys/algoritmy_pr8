@@ -60,42 +60,64 @@ class BinaryTree{
     }
 
     delete(value){
-        this.root = this.deleteRecursively(this.root, value);
+        this.root = this.deleteNode(this.root, value);
     }
 
-    deleteRecursively(node, value){
-        if (node === undefined){
-            console.log("not found");
-            return undefined;
-        }
-        if (value < node.value){
-            node.left = this.deleteRecursively(node.left, value);
-        }else if(value > node.value){
-            node.right = this.deleteRecursively(node.right, value);
-        }else{
-            if (!node.left && !node.right) {
+   deleteNode(current, value){
+        if (current == undefined) return undefined;
+        if (value === current.value) {
+            if (current.left == undefined && current.right == undefined){
                 return undefined;
+            }else if (current.left == undefined){
+                return current.right;
+            }else if (current.right == undefined){
+                return current.left;
+            }else{
+                let tempNode = this.findMin(current.right);
+                current.value = tempNode.value;
+
+                current.right = this.deleteNode(current.right, tempNode.value)
+                return current;
             }
-            if (!node.left) {
-                return node.right;
-            }
-            if (!node.right) {
-                return node.left;
-            }
-            let minRight = this._findMin(node.right);
-            node.value = minRight.value;
-            node.right = this._deleteRecursively(node.right, minRight.value);
+        }else if(value < current.value){
+            current.left = this.deleteNode(current.left, value);
+            return current; 
+        }else{
+            current.right = this.deleteNode(current.right, value);
+            return current; 
         }
-        return node;
-    }
+   }
     
-    _findMin(node) {
-        while (node.left) {
-            node = node.left;
-        }
-        return node;
+    findMin(node) {
+        while(!node.left == undefined)
+            node = node.left
+
+        return node
     }
+
+    Min(root){
+        if (!root.left){
+            return root.value;
+        }else{
+            return this.Min(root.left)
         }
+    }
+
+    Max(root){
+        if (!root.right){
+            return root.value;
+        }else{
+            return this.Max(root.right)
+        }
+    }
+
+    CountNodes(root){
+        if (root == undefined){
+            return 0; 
+        }
+        return 1 + this.CountNodes(root.left) + this.CountNodes(root. right);    
+    }
+}
 
 
 const tree = new BinaryTree();
@@ -112,5 +134,8 @@ tree.add(41);
 // const res = tree.find(23);
 // console.log(res)
 console.log(JSON.stringify(tree, null, "  "));
-delete(5);
+//tree.delete(5);
 console.log(JSON.stringify(tree, null, "  "));
+console.log(`Максимальний елемент: ${tree.Max(tree.root)}`);
+console.log(`Мінімальний елемент: ${tree.Min(tree.root)}`);
+console.log(`Кількість вузлів в дереві: ${tree.CountNodes(tree.root)}`);
